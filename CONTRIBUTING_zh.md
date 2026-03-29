@@ -84,6 +84,22 @@ docs(skills): document Skills Hub import
   ```
 - **文档：** 当你添加或更改面向用户的行为时，更新文档和 README。文档位于 `website/public/docs/` 下。
 
+**推荐的本地 Python 测试环境**
+
+如果你本地还没有可用于 CoPaw 的 Python 3.10+ 环境，推荐在仓库内创建
+一个独立虚拟环境：
+
+```bash
+uv venv .venv
+uv pip install --python .venv/bin/python -e ".[dev]"
+```
+
+之后显式使用该虚拟环境运行测试：
+
+```bash
+.venv/bin/pytest
+```
+
 ---
 
 ## 贡献类型
@@ -136,6 +152,35 @@ CoPaw 支持**多种模型后端**：云 API（如 DashScope、ModelScope）、*
   - `copaw channels config` — 交互式配置
 
 如果你贡献**新的内置频道**，将其添加到注册表，如有需要，添加配置器以使其出现在 Console 和 CLI 中。在 `website/public/docs/channels.*.md` 中记录新频道（身份验证、webhooks 等）。
+
+#### 我们希望看到的 Channel 单测
+
+对于 channel 相关 PR，请补充聚焦于公共行为的单测。优先测试 channel
+自身对外契约，以及 manager / registry 集成行为；除非你确实在修改基类
+契约，否则尽量不要为了“大而全”去扩展 `BaseChannel` 的覆盖范围。
+
+一个新的或有改动的 channel，通常至少应覆盖：
+
+- `from_config` / 配置映射是否正确
+- 会话路由行为，如 `resolve_session_id`、私聊/群聊/线程隔离
+- 基础发送行为
+- 若改动影响发现、启停、热替换、路由注册，则补充 registry 或 manager 集成测试
+
+仓库内可参考的样例：
+
+- `tests/unit/channels/test_channel_manager.py`
+- `tests/unit/channels/test_channel_registry.py`
+- `tests/unit/channels/test_channel_developer_template.py`
+
+本地仅运行 channel 测试：
+
+```bash
+.venv/bin/pytest tests/unit/channels -q
+```
+
+对于社区自定义 channel 开发者，`test_channel_developer_template.py`
+提供了一个最小样板，示范如何 stub 一个 channel 并验证约定行为，而不引入
+依赖真实网络的重型测试。
 
 ---
 

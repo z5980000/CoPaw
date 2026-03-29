@@ -84,6 +84,22 @@ docs(skills): document Skills Hub import
   ```
 - **Documentation:** Update docs and README when you add or change user-facing behavior. The docs live under `website/public/docs/`.
 
+**Recommended local Python test setup**
+
+If you do not already have a Python 3.10+ environment for CoPaw, we
+recommend creating a repo-local virtualenv:
+
+```bash
+uv venv .venv
+uv pip install --python .venv/bin/python -e ".[dev]"
+```
+
+Then run tests with the virtualenv explicitly:
+
+```bash
+.venv/bin/pytest
+```
+
 ---
 
 ## Types of Contributions
@@ -136,6 +152,37 @@ Channels are how CoPaw talks to **DingTalk, Feishu, QQ, Discord, iMessage**, etc
   - `copaw channels config` — interactive config
 
 If you contribute a **new built-in channel**, add it to the registry and, if needed, a configurator so it appears in the Console and CLI. Document the new channel (auth, webhooks, etc.) in `website/public/docs/channels.*.md`.
+
+#### Channel tests we expect
+
+For channel-related PRs, please add focused unit tests for the changed
+public behavior. Prefer testing the channel's public layer and manager /
+registry integration rather than changing `BaseChannel` tests unless the
+base contract itself is what changed.
+
+At minimum, a new or changed channel should usually cover:
+
+- `from_config` / configuration mapping
+- session routing behavior (`resolve_session_id`, thread or DM isolation)
+- basic outbound send behavior
+- registry or manager integration if the change affects discovery,
+  enable/disable, replacement, or route registration
+
+Useful examples in this repository:
+
+- `tests/unit/channels/test_channel_manager.py`
+- `tests/unit/channels/test_channel_registry.py`
+- `tests/unit/channels/test_channel_developer_template.py`
+
+To run only channel tests locally:
+
+```bash
+.venv/bin/pytest tests/unit/channels -q
+```
+
+For community channel authors, `test_channel_developer_template.py`
+acts as a minimal sample showing how to stub a channel and verify the
+expected contract without introducing network-heavy tests.
 
 ---
 
