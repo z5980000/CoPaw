@@ -1291,6 +1291,28 @@ curl -X POST http://localhost:8088/api/my-echo/callback \
 
 **Real-world example**: WeChat ClawBot integration ([PR #2140](https://github.com/agentscope-ai/CoPaw/pull/2140), [Issue #2043](https://github.com/agentscope-ai/CoPaw/issues/2043)) uses this mechanism to register the `/api/wechat/callback` route with Tencent's official SDK for message delivery.
 
+### Testing custom and shared channel behavior
+
+When adding or changing a channel, prefer focused unit tests over
+network-heavy end-to-end coverage.
+
+- Use `tests/unit/channels/test_channel_developer_template.py` as the
+  minimal example for community channel authors.
+- Use `tests/unit/channels/test_channel_manager.py` and
+  `tests/unit/channels/test_channel_registry.py` when the change affects
+  discovery, enable/disable behavior, route registration, or manager
+  replacement semantics.
+- If you change `BaseChannel`, add or update focused contract tests in
+  `tests/unit/channels/test_base_channel_contract.py` for shared rules
+  such as debounce, session routing, query extraction, and send-content
+  fallback.
+
+Run only channel tests locally with:
+
+```bash
+.venv/bin/pytest tests/unit/channels -q
+```
+
 ---
 
 ## Related pages

@@ -170,6 +170,7 @@ At minimum, a new or changed channel should usually cover:
 
 Useful examples in this repository:
 
+- `tests/unit/channels/test_base_channel_contract.py`
 - `tests/unit/channels/test_channel_manager.py`
 - `tests/unit/channels/test_channel_registry.py`
 - `tests/unit/channels/test_channel_developer_template.py`
@@ -183,6 +184,12 @@ To run only channel tests locally:
 For community channel authors, `test_channel_developer_template.py`
 acts as a minimal sample showing how to stub a channel and verify the
 expected contract without introducing network-heavy tests.
+
+If your PR changes `BaseChannel` itself, add or update focused contract
+tests in `tests/unit/channels/test_base_channel_contract.py`. Prefer
+testing stable shared rules such as session routing, debounce behavior,
+query extraction, direct-vs-tracked dispatch, and send-content fallback
+instead of locking down every internal implementation detail.
 
 ---
 

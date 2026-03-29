@@ -168,6 +168,7 @@ CoPaw 支持**多种模型后端**：云 API（如 DashScope、ModelScope）、*
 
 仓库内可参考的样例：
 
+- `tests/unit/channels/test_base_channel_contract.py`
 - `tests/unit/channels/test_channel_manager.py`
 - `tests/unit/channels/test_channel_registry.py`
 - `tests/unit/channels/test_channel_developer_template.py`
@@ -181,6 +182,12 @@ CoPaw 支持**多种模型后端**：云 API（如 DashScope、ModelScope）、*
 对于社区自定义 channel 开发者，`test_channel_developer_template.py`
 提供了一个最小样板，示范如何 stub 一个 channel 并验证约定行为，而不引入
 依赖真实网络的重型测试。
+
+如果 PR 修改了 `BaseChannel` 本身，请同步在
+`tests/unit/channels/test_base_channel_contract.py` 中补充或更新聚焦型
+契约测试。优先覆盖稳定的共享规则，例如会话路由、去抖、query 提取、
+直接分发与 tracker 分流、发送内容 fallback，而不是把所有内部实现细节
+都锁死在测试里。
 
 ---
 

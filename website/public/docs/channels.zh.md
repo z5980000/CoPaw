@@ -1313,6 +1313,28 @@ curl -X POST http://localhost:8088/api/my-echo/callback \
 
 **实际案例**：微信 ClawBot 集成（[PR #2140](https://github.com/agentscope-ai/CoPaw/pull/2140)、[Issue #2043](https://github.com/agentscope-ai/CoPaw/issues/2043)）通过此机制注册 `/api/wechat/callback` 路由，使用腾讯官方 SDK 处理消息投递。
 
+### 自定义渠道与公共契约的测试建议
+
+新增或修改 channel 时，优先补聚焦型单测，而不是一开始就写依赖真实网络
+的端到端测试。
+
+- 社区开发者可先参考
+  `tests/unit/channels/test_channel_developer_template.py`
+  这个最小样板。
+- 如果改动影响发现、启停、路由注册、manager 热替换等公共层行为，可参考
+  `tests/unit/channels/test_channel_manager.py` 和
+  `tests/unit/channels/test_channel_registry.py`。
+- 如果修改的是 `BaseChannel` 本身，请在
+  `tests/unit/channels/test_base_channel_contract.py`
+  中补充或更新共享契约测试，优先覆盖去抖、会话路由、query 提取、
+  send-content fallback 等稳定规则。
+
+本地仅运行 channel 测试：
+
+```bash
+.venv/bin/pytest tests/unit/channels -q
+```
+
 ---
 
 ## 相关页面
